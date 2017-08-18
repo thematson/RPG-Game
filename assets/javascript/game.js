@@ -1,12 +1,55 @@
 	$(document).ready(function() {
-			// var player = ['alone', 'gusta', 'troll', 'yuno'];
-			// var herohp = [100, 120, 150, 180]; //alone = 100 - 8 - 25; gusta = 120 - 7 - 22; troll = 150 - 5 - 16; yuno = 180 - 4 - 13
-			// var enemyhp = [100, 120, 150, 180];
-			// var cap = [25, 22, 16, 13];
-			// var ap = [8, 7, 5, 4];
-			
-function playgame() {				
+						
+		//declare object of fighting characters	
 			var player = [
+			{
+				name:'Forever Alone',
+				hp:110,
+				cap:30,
+				ap:15,
+				nick:'alone'
+			},
+			{
+				
+				name:'Me Gusta',
+				hp:120,
+				cap:20,
+				ap:7,
+				nick:'gusta'
+			}, 
+			{
+				name:'Trollface',
+				hp:150,
+				cap:15,
+				ap:8,
+				nick:'troll'
+			}, 
+			{
+				name:'Y U No',
+				hp:185,
+				cap:16,
+				ap:6,
+				nick:'yuno'
+			},
+			];
+		//writes hit-points html on icons	
+			for (i=0; i<player.length; i++) {
+
+				var hitpoints = player[i].hp;
+				$("#"+player[i].nick+"points").html("<p>" + player[i].hp + "</p>");
+			}
+		//variables are decraled for global use	
+			var myhero = "";
+			var hero = false;
+			var enemy = false;
+			var myenemy = "";
+			var originalScreen = $(".container").clone();
+			var round = 0;
+			var tempherohp = parseInt(myhero.hp);
+
+	// reset function to reset most variables		
+function reset () {
+				var player = [
 			{
 				name:'Forever Alone',
 				hp:100,
@@ -41,21 +84,27 @@ function playgame() {
 			for (i=0; i<player.length; i++) {
 
 				var hitpoints = player[i].hp;
-				$("#"+player[i].nick+"points").html("<p>" + player[i].hp + "</p>");
+				$
 			}
-
+			
 			var myhero = "";
-			var myenemy = "";
-			var tempheroname = "";
-			var tempenemyname = "";
 			var hero = false;
 			var enemy = false;
-			var originalScreen = $(".container").clone();
+			var myenemy = "";
+			var tempherohp = parseInt(myhero.hp);
 
+		};
+	//function to start game 
+
+function playgame() {
+			
+			var tempheroname = "";
+			var tempenemyname = "";
+	//user chooses his hero	
 		$(".statbox").on("click", function() {
 			if (hero == false) {
 					hero = true;
-					$(this).toggleClass("hero");
+					$(this).addClass("hero");
 					$(this).removeClass("statbox");
 					$(this).animate({ height: "150px", width: "150px"}).css("background-color", "lightgreen");
 					$(this.id).animate({ height: "85px", width: "85px"});
@@ -68,14 +117,14 @@ function playgame() {
 						}
 					}
 			}
-			
+	//user chooses his frost enemy		
 			else if (enemy == false) {
 					enemy = true;
-					$(this).toggleClass("enemy");
+					$(this).addClass("enemy");
 					$(this).removeClass("statbox");
 					$(this).animate({ height: "150px", width: "150px"}).css("background-color", "red");
 					$(this.id).animate({ height: "85px", width: "85px"});
-					$("#enemy").append($(this)).css("color", "black");
+					$("#enemy").append($(".enemy")).css("color", "black");
 					$("#instruct").html("<h2></h2>");
 					$(".statbox").toggleClass("gang");
 					$(".statbox").removeClass("statbox");
@@ -89,55 +138,97 @@ function playgame() {
 						var tempenemyname = ($(this).attr("id"));
 						if (tempenemyname == (player[i].nick)) {
 							myenemy = player[i];
+							
 						}
 					}
-			
 			}
 
 			else {
-
+				console.log("else");
 			};
+
+			fight();
+	});
+				};
+	//battle function
+function fight() {	
 					
-			var round = 0;
-			
+	//if it's the initial round, variable are assigned the original object values		 
+				if (round == 0) {
+				tempherohp = parseInt(myhero.hp);
+				}
+				var tempenemyhp = parseInt(myenemy.hp);
+				var heroattack = parseInt(myhero.ap)+(round*(parseInt(myhero.ap)));
+	//button click starts melee		
 			$(".btn").on("click", function() {
-				var tempherohp = myhero.hp;
-				var heroattack = myhero.ap+(round*myhero.ap);
-				if ((tempherohp - myenemy.cap) < 1 && myenemy.hp > 0) {
-					$("#"+myhero.nick).css("background-color", "black").animate({height: '300px', width: '300px', opacity: '0.4'}, "slow").toggle("explode");				
-					$(".btn").unbind("click");	
-					$(".statbox").unbind("click");				
-					$("#hero").append("<br/><br/><h2>EPIC FAIL!</h2>")
-					$("#attack").html('<button type="button" class="btn btn-success btn-lg">Restart!</button>').css("color", "black");
-					$("#fightlog").html("<br/><br/>Please click the 'Restart!' button to play again");
-					$(".btn").on("click", function() {
-						$(".container").replaceWith(originalScreen);
-						playgame();
+
+				heroattack = parseInt(myhero.ap)+(round*(parseInt(myhero.ap)));
+	//if both combatants still have health, carry on the game play					
+				if (tempherohp >= 1 && tempenemyhp >= 1) {
+				
+					$("#fightlog").html("<br/><br/><p>You attacked " + myenemy.name + " for " + heroattack + " damage<br/>" + 
+					myenemy.name + " attacked you back for " + myenemy.cap + " damage</p>");					
+					round++;
+					tempenemyhp=(tempenemyhp - heroattack);
+	// after a battle round, checks to see if enemy is still 'alive',
+					if (tempherohp >= 0 && tempenemyhp <= 0) {
+
+			//if not, enemy disappears and user must select another
+						$("#"+myenemy.nick).css("background-color", "black").toggle("explode").empty();	
+						setTimeout(function() {
+								$("#enemy").empty();
+								$("#enemy").html("<h4>The Enemy</h4");
+								$("#enemy").append("<br/><br/><h2>FTW!!!</h2><br/><p>Please select another opponent!</p>").fadeIn("slow");
+								$("#fightlog").empty();
+							}, 500);
+						$(".gang").on("click", function() {
+							$(".gang").unbind("click");
+							console.log(this);
+							$(this).addClass("enemy");
+							$(this).removeClass("gang");
+							$("#enemy").empty();
+							$("#enemy").html("<h4>The Enemy</h4");
+							$(this).animate({ height: "150px", width: "150px"}).css("background-color", "red");
+							$(this.id).animate({ height: "85px", width: "85px"});
+							$("#enemy").append($(".enemy")).css("color", "black");
+							for (i=0; i < player.length; i++) {
+								var tempenemyname = ($(this).attr("id"));
+								if (tempenemyname == (player[i].nick)) {
+									myenemy = player[i];
+								}
+							}
+															
+									
 						});
 					}
 
-				else if (tempherohp > 0 && (myenemy.hp - (heroattack)) < 1) {
-					$("#"+myenemy.nick).css("background-color", "black").toggle("explode");	
-					setTimeout(function() {
-							$("#enemy").append("<br/><br/><h2>FTW!!!</h2><br/><p>Please select another opponent!</p>").fadeIn("slow");
-							$("#fightlog").empty();
-						}, 500);
-				}
-				else if (myhero.hp >= 1 && myenemy.hp >= 1) {
-					$("#fightlog").html("<br/><br/><p>You attacked " + myenemy.name + " for " + heroattack + " damage<br/>" + 
-					myenemy.name + " attacked you back for " + myenemy.cap + " damage</p>");
-					myhero.hp=(myhero.hp - myenemy.cap);
-					myenemy.hp=(myenemy.hp - heroattack);
-					$("#"+myhero.nick+"points").html("<p>" + myhero.hp + "</p>");
-					$("#"+myenemy.nick+"points").html("<p>" + myenemy.hp + "</p>");
-					round++;
+					tempherohp=(tempherohp - parseInt(myenemy.cap));
+	// after battle round checks to see if user's hero is still 'alive'
+					if (tempherohp <= 0 && tempenemyhp > 0) {
+			//if not, game is over and button is clicked to reset
+						$("#"+myhero.nick).css("background-color", "black").animate({height: '300px', width: '300px', opacity: '0.4'}, "slow").toggle("explode");				
+						$(".btn").unbind("click");	
+						$(".statbox").unbind("click");				
+						$("#hero").append("<br/><br/><h2>EPIC FAIL!</h2>")
+						$("#attack").html('<button type="button" class="btn btn-success btn-lg">Restart!</button>').css("color", "black");
+						$("#fightlog").html("<br/><br/>Please click the 'Restart!' button to play again");
+						reset();
+						$(".btn").on("click", function() {
+							location.reload();
+							});
+						}	
+		//updates on-icon hit points
+					$("#"+myhero.nick+"points").html("<p>" + tempherohp + "</p>");
+					$("#"+myenemy.nick+"points").html("<p>" + tempenemyhp + "</p>");
+					
 				};
 			});			
-			});
+			
 				};
-		
+//calls game to start	
 	playgame();
-
+	fight();
+	
 });
 	/*	1. All 4 icons appear on screen waitning to be clicked
 			a. User is prompted to select a hero
@@ -182,107 +273,4 @@ function playgame() {
 
 
 
-		// 	if ($(".statbox").on("click", function() {
-
-		// 		// heroHP = 100;
-		// 		// // AP = 8;
-		// 		// enemyHP = 120;
-		// 		// CAP = 22;
-		// 		$(".pit").css("color", "black")
-		// 		$("#aloneimg").animate({ height: "85px", width: "85px"})
-		// 		$("#gustaimg").animate({ height: "85px", width: "85px"})
-		// 		$("#trollimg").animate({ height: "85px", width: "85px"})
-		// 		$("#yunoimg").animate({ height: "85px", width: "85px"})
-		// 		$("#alone").animate({ height: "150px", width: "150px"}).css("background-color", "lightgreen")
-		// 		$("#gusta").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#troll").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#yuno").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#action").append('<button type="button" class="btn btn-danger btn-lg">Attack!</button>')
-		// 		$("#hero").append($("#alone"))
-		// 		$("#gang").append($("#gusta"))
-		// 		$("#gang").append($("#troll"))
-		// 		$("#gang").append($("#yuno"))
-		// 		$(".overlay").empty()
-		// 		$("#alone").on("click", null).off("click")
-		// 		$("#gusta").on("click", null).off("click")
-		// 		$("#troll").on("click", null).off("click")
-		// 		$("#yuno").on("click", null).off("click")
-		// 		$("#gusta").on("click", function() {
-		// 			$("#enemy").append($("#gusta"))
-		// 			$("#gusta").css("background-color", "red")
-		// 			$(".btn").on("click", function() {
-		// 				var tempHeroHP = parsInt($(this).attr("heroHP"))
-		// 				console.log("this first works");
-		// 				if (tempHeroHP > 0 && enemyHP > 0) {
-		// 					console.log(AP[player.indexOf('alone')]);
-		// 					$("#action").append("<br/><br/><p>You attacked Me Gusta for " + AP[alone] + " damage<br/>" + 
-		// 						"Me Gusta attacked you back for " + CAP[gusta] + " damage</p>");
-		// 				}  
-		// 	        });
-		// 		});
-				
-
-
-		// 	}));
-
-		// 	if ($("#gusta").on("click", function() {
-		// 		$(".pit").css("color", "black")
-		// 		$("#aloneimg").animate({ height: "85px", width: "85px"})
-		// 		$("#gustaimg").animate({ height: "85px", width: "85px"})
-		// 		$("#trollimg").animate({ height: "85px", width: "85px"})
-		// 		$("#yunoimg").animate({ height: "85px", width: "85px"})
-		// 		$("#gusta").animate({ height: "150px", width: "150px"}).css("background-color", "lightgreen")
-		// 		$("#alone").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#troll").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#yuno").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#action").append('<button type="button" class="btn btn-danger btn-lg">Attack!</button>')
-		// 		$("#hero").append($("#gusta"))
-		// 		$("#gang").append($("#alone"))
-		// 		$("#gang").append($("#troll"))
-		// 		$("#gang").append($("#yuno"))
-		// 		$(".overlay").empty()
-		// 		$("#gusta").on("click", null).off("click");
-
-		// 	}));
-
-		// 	if ($("#troll").on("click", function() {
-		// 		$(".pit").css("color", "black")
-		// 		$("#aloneimg").animate({ height: "85px", width: "85px"})
-		// 		$("#gustaimg").animate({ height: "85px", width: "85px"})
-		// 		$("#trollimg").animate({ height: "85px", width: "85px"})
-		// 		$("#yunoimg").animate({ height: "85px", width: "85px"})
-		// 		$("#troll").animate({ height: "150px", width: "150px"}).css("background-color", "lightgreen")
-		// 		$("#gusta").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#alone").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#yuno").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#action").append('<button type="button" class="btn btn-danger btn-lg">Attack!</button>')
-		// 		$("#hero").append($("#troll"))
-		// 		$("#gang").append($("#alone"))
-		// 		$("#gang").append($("#gusta"))
-		// 		$("#gang").append($("#yuno"))
-		// 		$(".overlay").empty()
-		// 		$("#troll").on("click", null).off("click");
-			
-
-		// 	}));
-
-		// 	if ($("#yuno").on("click", function() {
-		// 		$(".pit").css("color", "black")
-		// 		$("#aloneimg").animate({ height: "85px", width: "85px"})
-		// 		$("#gustaimg").animate({ height: "85px", width: "85px"})
-		// 		$("#trollimg").animate({ height: "85px", width: "85px"})
-		// 		$("#yunoimg").animate({ height: "85px", width: "85px"})
-		// 		$("#yuno").animate({ height: "150px", width: "150px"}).css("background-color", "lightgreen")
-		// 		$("#gusta").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#alone").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#troll").animate({ height: "150px", width: "150px"}).css("background-color", "yellow")
-		// 		$("#action").append('<button type="button" class="btn btn-danger btn-lg">Attack!</button>')
-		// 		$("#hero").append($("#yuno"))
-		// 		$("#gang").append($("#alone"))
-		// 		$("#gang").append($("#gusta"))
-		// 		$("#gang").append($("#troll"))
-		// 		$(".overlay").empty()
-		// 		$("#yuno").on("click", null).off("click");
-			
-
-		// 	}));
+	
