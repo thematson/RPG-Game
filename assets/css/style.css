@@ -19,7 +19,7 @@ html {
 }
 body {
   margin: 0;
-  
+
 }
 
 #game.container {
@@ -29,6 +29,29 @@ body {
 
 }
 
+.endText {
+  left: 0;
+  line-height: 200px;
+  margin: auto;
+  margin-top: -100px;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+}
+
+h1.endText {
+   color: whitesmoke;
+   font-size: 15rem;
+   white-space: nowrap;
+   overflow: hidden;
+   animation: type 3s steps(60, end);
+}
+
+@keyframes type {
+  from {
+    width: 0;
+  }
+}
 #background-img {
 	position: absolute;
 	width: 100%;
@@ -71,7 +94,7 @@ header {
 }
 
 .icons {
-	
+
 
 }
 
@@ -98,7 +121,7 @@ header {
 	padding: 0;
 }*/
 
-.hero p, 
+.hero p,
 .enemy p,
 .gang p,
 .statbox p {
@@ -130,7 +153,7 @@ header {
 /*#alone{
 	background: url("../images/forever-alone.jpg") no-repeat center;
 	background-size: 75%;
-	
+
 }*/
 
 article,
