@@ -188,8 +188,16 @@ function fight() {
 	// after a battle round, checks to see if enemy is still 'alive',
 						if (tempherohp > 0 && tempenemyhp <= 0) {
 
+
 					//if not, enemy disappears and user must select another
 								enemy = false;
+								var gangLeft = $("#gang").contents().length;
+								var enemiesLeft = $("#gang").contents().length;
+								console.log(gangLeft);
+								console.log(enemiesLeft);
+								if (gangLeft === 0 && enemiesLeft === 0) {
+									playerWins();
+								} else {
 								// $(".gang").bind("click", handler);
 								$("#"+myenemy.nick).css("background-color", "black").toggle("explode").empty();
 								setTimeout(function() {
@@ -199,7 +207,7 @@ function fight() {
 										$("#fightlog").empty();
 									}, 500);
 
-								console.log($("#gang").contents().length) ;
+
 								$(".gang").on("click", function() {
 									$(".gang").unbind("click");
 									console.log(this);
@@ -220,6 +228,7 @@ function fight() {
 										}
 									}
 								});
+							}
 						}
 						if (tempherohp <= 0 && tempenemyhp > 0) {
 							playerLoses();
@@ -272,6 +281,20 @@ function fight() {
 		$("#attack").html('<button type="button" class="btn btn-success btn-lg">Restart!</button>').css("color", "black");
 		$("#fightlog").html("<br/><br/>Please click the 'Restart!' button to play again");
 		reset();
+		$(".btn").on("click", function() {
+			location.reload();
+			});
+	};
+	function playerWins() {
+		$("#enemy").empty();
+		$("#gangPit").empty();
+		$("#"+myhero.nick).css("background-color", "gold").animate({height: '500px', width: '500px'}, "slow");
+		$(".btn").unbind("click");
+		$(".statbox").unbind("click");
+		$("#hero").append("<br/><br/><h2>WINNER WINNER!!!</h2>")
+		$("#attack").html('<button type="button" class="btn btn-success btn-lg">Restart!</button>').css("color", "black");
+		$("#fightlog").html("<br/><br/>Please click the 'Restart!' button to play again");
+
 		$(".btn").on("click", function() {
 			location.reload();
 			});
